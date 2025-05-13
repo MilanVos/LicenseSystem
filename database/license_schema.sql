@@ -1,0 +1,39 @@
+CREATE DATABASE IF NOT EXISTS license_system;
+USE license_system;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_admin BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS licenses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    license_key VARCHAR(255) NOT NULL UNIQUE,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    issued_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expiry_date TIMESTAMP NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS license_activations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    license_id INT NOT NULL,
+    machine_id VARCHAR(255) NOT NULL,
+    activation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_check_date TIMESTAMP NULL,
+    FOREIGN KEY (license_id) REFERENCES licenses(id)
+);
